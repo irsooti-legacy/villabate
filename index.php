@@ -41,6 +41,13 @@
      	border-bottom: solid 1px #CECECE;
      	cursor: pointer;
      }
+     .red .fa-chevron-circle-down {
+     	color: #d80027;
+     }
+
+     .green .fa-chevron-circle-up {
+     	color: #b6db8a;
+     }
 
      .votes, .fa-chevron-circle-down, .fa-chevron-circle-up {
      	padding-left: 10px;

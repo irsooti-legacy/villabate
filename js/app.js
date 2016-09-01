@@ -28,17 +28,66 @@ App = {
 
 	control: {
 
-		initLocal: function() {
+		getVoteMemory: function() {
 			if (!localStorage.villapp)
-				localStorage.villapp = {};
-			//else App.voteMemory = JSON.parse(localStorage.villapp);
+				localStorage.villapp = JSON.stringify([]);
+			return JSON.parse(localStorage.villapp);
 		},
 
-		storeLocal: function(obj) {
+		saveVoteMemory: function(obj) {
+			var newMemory = App.control.getVoteMemory();
+			newMemory.push(obj);
+			localStorage.villapp = JSON.stringify(newMemory);
+		},
+
+		storeLocalMemory: function(id, UpDown) {
 			// GET VOTEMEMORY
 			// CHECK IN EACH ARRAY IF EXISTS ID
 			// IF EXIST CHANGE IT
 			// ELSE CREATE NEW
+			var newMemory = App.control.getVoteMemory(),
+				idFinded = false,
+				post = false
+
+			$.each(App.control.getVoteMemory(), function(index, value) {
+
+				if (id == value.id) {
+
+					//
+
+					if (value.vote && value.vote == UpDown) {
+
+						// Well, there was a vote, but is the same given.
+						// Throw the error and break the cycle.
+
+						//alert('Vote already exists!');
+
+						idFinded = true;	// ID found!
+						post = false;		// Don't post, the vote already exists
+						return false		// Break the cycle
+					}
+
+					newMemory[index].vote = UpDown;
+					localStorage.villapp = JSON.stringify(newMemory);
+
+					//alert('Vote updated succesfully!');
+					idFinded = true;	// ID found!
+					post = true;		// Post, there's a vote but is different
+					return false;		// Break the cycle
+				}
+
+			});
+
+			if (!idFinded) {
+				//alert('Vote not found!');
+				App.control.saveVoteMemory({ 'id': id, 'vote': UpDown});
+				console.log(App.control.getVoteMemory().length);
+
+				post = true;		// Post it, record is new!
+			}
+
+			return post;
+
 		},
 		// Returns the interested zone...
 		getCoordinates: function () {
@@ -48,7 +97,7 @@ App = {
 		// Initialize google maps area and store the data returned in map var
 		getMap: function() {
 			var newMap;
-			var minZoomLevel = 13;
+			var minZoomLevel = 14;
 
 			newMap = new google.maps.Map(App.view.$map, {
 		      center: App.model.coordinates,
@@ -109,7 +158,7 @@ App = {
 		// * Position { lat, lng }
 		// * title 'string'
 		addMarker: function (lat, lng, title) {
-	        return new google.maps.Marker({
+	        var marker = new google.maps.Marker({
 	            position: {lat: lat, lng: lng},
 	            map: App.map,
 	            title: title,
@@ -120,6 +169,14 @@ App = {
     					size: new google.maps.Size(32, 32)
     				}
 	        });
+
+	        var infowindow = new google.maps.InfoWindow({
+			    content: '<h1>' + title + '</h1>'
+			  });
+
+         	marker.addListener('click', function() {
+			    infowindow.open(map, marker);
+		  	});
     	},
 
     	// This function center another area by clicking stored zone
@@ -151,11 +208,11 @@ App = {
 
 	view: {
 		init: function() {
-			App.control.initLocal();
+			App.control.getVoteMemory();
 			$(App.view.$map).css('height', App.view.$mapHeight());		// Set the current size of windows, just to be responsive
 			$('.first-column').css('height', App.view.$mapHeight());	// Same, with left column\bottom column if mobile
 			App.view.addListener();
-
+			App.view.$votedBlock();
 			// Add the listener on modal buttons
 			$(document).ready(function(){
 			    $('#content').keypress(function(e){
@@ -223,14 +280,14 @@ App = {
 				***	"voti" => $voti
 				**/
 
-				App.control.postVote({id: id, voti: plus1});
+				App.control.postVote({id: id, voti: plus1}, 'up');
 				//$el.find( "span" ).text(minus1); // TODO: put in Ajax call
 				// Ajax call... 
 			});
 
 			$voteDown.bind('click', function() {
 				var minus1 = parseInt($el.find( "span" ).text()) - 1;
-				App.control.postVote({id: id, voti: minus1});
+				App.control.postVote({id: id, voti: minus1}, 'down');
 
 
 				//$el.find( "span" ).text(plus1); // TODO: put in Ajax call
@@ -255,6 +312,22 @@ App = {
 
 		$modalToggle: function() {
 			$('#modal > .modal').modal('toggle');
+		},
+
+		$votedBlock: function() {
+
+			$('.report').removeClass('green red');
+			$.each(App.control.getVoteMemory(), function(index, value) {
+
+			if (value.vote == 'up') {
+				$('#report-' + value.id).addClass('green');
+			}
+
+			if (value.vote == 'down') {
+				$('#report-' + value.id).addClass('red');
+			}
+
+			});
 		},
 
 		addListener: function() {	// Add all useful listener
@@ -291,4 +364,20 @@ App = {
   navigator.geolocation.getCurrentPosition(success, error);
 
 */
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length,c.length);
+        }
+    }
+    return "";
+}
+
 $(window).height();
