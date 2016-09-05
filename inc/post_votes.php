@@ -11,22 +11,27 @@
 
 require_once("connection.php");
 
-if (isset($_POST)) {
+session_start();
 
-	$id = $conn->real_escape_string($_POST['id']);
-	$voti = $conn->real_escape_string($_POST['voti']);
+if (isset($_SESSION['user'])) {
+
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+		$id = $conn->real_escape_string($_POST['id']);
+		$voti = $conn->real_escape_string($_POST['voti']);
 
 
-	$query = "UPDATE report SET voti=$voti WHERE id=$id";
-	$conn->query($query);
+		$query = "UPDATE report SET voti=$voti WHERE id=$id";
+		$conn->query($query);
 
-	header('Content-type: text/javascript');
+		header('Content-type: text/javascript');
 
-	echo json_encode(
-		[
-			"id" => $id,
-			"voti" => $voti
-		], JSON_NUMERIC_CHECK);
+		echo json_encode(
+			[
+				"id" => $id,
+				"voti" => $voti
+			], JSON_NUMERIC_CHECK);
+	}
 }
 
 $conn->close();

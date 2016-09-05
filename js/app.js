@@ -27,17 +27,35 @@ App = {
 	},
 
 	control: {
+		getUserDb: function() {
+			if (typeof(user_votes) == "undefined")
+				return { user:'Anonimo' };
+			if (user_votes.length == 0)
+				return { user:'Anonimo' };
+			return user_votes;
+		},
+
+		getUserSession: function() {
+			var istance = user;
+			if (istance.length == 1) return istance;
+			return false;
+		},
 
 		getVoteMemory: function() {
-			if (!localStorage.villapp)
-				localStorage.villapp = JSON.stringify([]);
-			return JSON.parse(localStorage.villapp);
+			/*if (!localStorage.villapp)
+			**	localStorage.villapp = JSON.stringify([]);
+			**	return JSON.parse(localStorage.villapp);
+			**/
+			if (typeof(user_votes) != "undefined")
+				return user_votes.votes;
+			return [{}];
 		},
 
 		saveVoteMemory: function(obj) {
 			var newMemory = App.control.getVoteMemory();
-			newMemory.push(obj);
-			localStorage.villapp = JSON.stringify(newMemory);
+			user_votes.votes.push(obj);
+
+			//localStorage.villapp = JSON.stringify(newMemory);
 		},
 
 		storeLocalMemory: function(id, UpDown) {
@@ -45,6 +63,7 @@ App = {
 			// CHECK IN EACH ARRAY IF EXISTS ID
 			// IF EXIST CHANGE IT
 			// ELSE CREATE NEW
+			if (App.control.getUserDb().user == "Anonimo") alert('Registrati per poter votare!');
 			var newMemory = App.control.getVoteMemory(),
 				idFinded = false,
 				post = false
@@ -67,8 +86,14 @@ App = {
 						return false		// Break the cycle
 					}
 
-					newMemory[index].vote = UpDown;
-					localStorage.villapp = JSON.stringify(newMemory);
+					/**	user_id 
+					**	vote_id
+					**	voto
+					**/
+
+					App.control.postVoteStatus({id_vote: id, vote: UpDown}, index);
+					//App.control.getVoteMemory()[index].vote = UpDown;
+					//localStorage.villapp = JSON.stringify(newMemory);
 
 					//alert('Vote updated succesfully!');
 					idFinded = true;	// ID found!
@@ -80,7 +105,7 @@ App = {
 
 			if (!idFinded) {
 				//alert('Vote not found!');
-				App.control.saveVoteMemory({ 'id': id, 'vote': UpDown});
+				App.control.postVoteStatus({id_vote: id, vote: UpDown});
 				console.log(App.control.getVoteMemory().length);
 
 				post = true;		// Post it, record is new!
@@ -97,13 +122,14 @@ App = {
 		// Initialize google maps area and store the data returned in map var
 		getMap: function() {
 			var newMap;
-			var minZoomLevel = 14;
+			var minZoomLevel = 15;
 
 			newMap = new google.maps.Map(App.view.$map, {
 		      center: App.model.coordinates,
 		      zoom: 16, //Zoom can be setted
 		      styles: [{"featureType":"water","elementType":"all","stylers":[{"hue":"#76aee3"},{"saturation":38},{"lightness":-11},{"visibility":"on"}]},{"featureType":"road.highway","elementType":"all","stylers":[{"hue":"#8dc749"},{"saturation":-47},{"lightness":-17},{"visibility":"on"}]},{"featureType":"poi.park","elementType":"all","stylers":[{"hue":"#c6e3a4"},{"saturation":17},{"lightness":-2},{"visibility":"on"}]},{"featureType":"road.arterial","elementType":"all","stylers":[{"hue":"#cccccc"},{"saturation":-100},{"lightness":13},{"visibility":"on"}]},{"featureType":"administrative.land_parcel","elementType":"all","stylers":[{"hue":"#5f5855"},{"saturation":6},{"lightness":-31},{"visibility":"on"}]},{"featureType":"road.local","elementType":"all","stylers":[{"hue":"#ffffff"},{"saturation":-100},{"lightness":100},{"visibility":"simplified"}]},{"featureType":"water","elementType":"all","stylers":[]}]
 		    });
+
 			var strictBounds = new google.maps.LatLngBounds(
 				new google.maps.LatLng(38.072775, 13.422820), 
 				new google.maps.LatLng(38.086544, 13.460637)
@@ -136,12 +162,72 @@ App = {
 		 		if (newMap.getZoom() < minZoomLevel) newMap.setZoom(minZoomLevel);
 			});
 
+ 			// Create the search box and link it to the UI element.
+	        var input = document.getElementById('pac-input');
+
+	        var searchBox = new google.maps.places.SearchBox(input, {bounds: strictBounds});
+	        newMap.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+	        // Bias the SearchBox results towards current map's viewport.
+	        newMap.addListener('bounds_changed', function() {
+	          searchBox.setBounds(strictBounds);
+	        });
+
+	        var markers = [];
+	        // Listen for the event fired when the user selects a prediction and retrieve
+	        // more details for that place.
+	        searchBox.addListener('places_changed', function() {
+	          var places = searchBox.getPlaces();
+	          if (places[0].vicinity == 'Villabate') 
+	          	console.log(places);
+	          else return false;
+
+	          if (places.length == 0) {
+	            return;
+	          }
+
+	          // Clear out the old markers.
+	          markers.forEach(function(marker) {
+	            marker.setMap(null);
+	          });
+	          markers = [];
+
+	          // For each place, get the icon, name and location.
+	          var bounds = new google.maps.LatLngBounds();
+	          places.forEach(function(place) {
+	            if (!place.geometry) {
+	              console.log("Returned place contains no geometry");
+	              return;
+	            }
+	            var icon = {
+	              url: place.icon,
+	              size: new google.maps.Size(71, 71),
+	              origin: new google.maps.Point(0, 0),
+	              anchor: new google.maps.Point(17, 34),
+	              scaledSize: new google.maps.Size(25, 25)
+	            };
+
+	            // Create a marker for each place.
+	            markers.push(new google.maps.Marker({
+	              map: newMap,
+	              icon: icon,
+	              title: place.name,
+	              position: place.geometry.location
+	            }));
+
+	            if (place.geometry.viewport) {
+	              // Only geocodes have viewport.
+	              bounds.union(place.geometry.viewport);
+	            } else {
+	              bounds.extend(place.geometry.location);
+	            }
+	          });
+	          newMap.fitBounds(bounds);
+	        });
+
+
 			App.map = newMap;
 
-		},
-
-		getReporter: function() {
-			return 'Anonimo';
 		},
 
 		// Render all the initialized data
@@ -149,7 +235,7 @@ App = {
 			App.control.getMap();
 			App.markers().forEach(function(langLat) {
 				App.control.addMarker(langLat.lat, langLat.lng, langLat.titolo);
-				App.view.$createDiv(langLat.titolo, langLat.lat, langLat.lng, langLat.voti, langLat.id);
+				App.view.$createDiv(langLat.titolo, langLat.lat, langLat.lng, langLat.voti, langLat.id, langLat.segnalatore);
 			});
 			App.view.init();
 		},
@@ -192,7 +278,7 @@ App = {
   			var value = App.view.$text();
         	if (value) {
 	         	App.control.postReport({
-	         		reporter: App.control.getReporter(),
+	         		reporter: App.control.getUserDb().user,
 	         		title: value,
 	         		lat: App.control.temp.lat, 
 	         		lng: App.control.temp.lng
@@ -200,6 +286,30 @@ App = {
          	}
 
          	else value;
+    	},
+
+    	getCurrentStreet: function(lat, lng, $sel) {
+			var geocoder;
+			geocoder = new google.maps.Geocoder();
+			var latlng = new google.maps.LatLng(lat, lng);
+			//alert("Else loop" + latlng);
+			geocoder.geocode({
+			    'latLng': latlng
+			}, function(results, status) {
+			    //alert("Else loop1");
+			    if (status == google.maps.GeocoderStatus.OK) {
+			        if (results[0]) {
+			            var add = results[0].formatted_address;
+			            console.log(results[0]);
+			            $sel.text(add);
+			        } else {
+			            $sel.text("address not found");
+			        }
+			    } else {
+			        //document.getElementById("location").innerHTML="Geocoder failed due to: " + status;
+			        //alert("Geocoder failed due to: " + status);
+			    }
+			});
     	},
 
 		postReport : function() {},
@@ -213,6 +323,8 @@ App = {
 			$('.first-column').css('height', App.view.$mapHeight());	// Same, with left column\bottom column if mobile
 			App.view.addListener();
 			App.view.$votedBlock();
+			App.view.$userLogged();
+			App.view.$userButton();
 			// Add the listener on modal buttons
 			$(document).ready(function(){
 			    $('#content').keypress(function(e){
@@ -245,12 +357,16 @@ App = {
 			
 			return $val;
 		},
-
+		$userButton: function() {
+			$('#userLogged').click(function() {
+				navigator.geolocation.getCurrentPosition(success, error);
+			});
+		},
 		$textReset: function() {	// Clear the previous value provided
 			$('#content').val('');
 			$('#maybeSuccess').removeClass('has-error');
 		},
-		$createDiv: function(title, lat, lng, votes, id) { 	// Generate the marker's div [!] - This function generate an extra div
+		$createDiv: function(title, lat, lng, votes, id, reporter) { 	// Generate the marker's div [!] - This function generate an extra div
 			var $el, $voteUp, $voteDown, $voteBlock;
 			$el = $('<div id="report-' + id + '" class="report row"><div>');
 			$voteDown = $('<i class="fa fa-chevron-circle-down fa-2x" aria-hidden="true"></i>');
@@ -262,16 +378,18 @@ App = {
 			$voteBlock.append($voteDown);
 			$voteBlock.append($voteUp);
 
-			$title = $('<p class="col-xs-7">' + title + '</p>');
+			$title = $('<p class="col-xs-7">' + title + '<br><small class="street"></small><br></p>');
 			
 
 			$('#reports').append($el);
 			$el.append($title);
 			$el.append($voteBlock);
-			$el.append('<small class="col-sm-12 text-right">Segnalato da <b>Anonimo</b></small>');
+			$el.append('<small class="col-sm-12 text-right">Segnalato da <b>' + reporter + '</b></small>');
 
 
 			$voteUp.bind('click', function() {
+				if(App.view.$registerPlz('Registrati per votare le segnalazioni!')) return false;
+
 				var plus1 = parseInt($el.find( "span" ).text()) + 1;
 				console.log(id);
 
@@ -286,6 +404,8 @@ App = {
 			});
 
 			$voteDown.bind('click', function() {
+				if(App.view.$registerPlz('Registrati per votare le segnalazioni!')) return false;
+
 				var minus1 = parseInt($el.find( "span" ).text()) - 1;
 				App.control.postVote({id: id, voti: minus1}, 'down');
 
@@ -295,7 +415,8 @@ App = {
 			});
 
 			$title.bind('click', function() {
-				//console.log(title);
+				console.log(title);
+				App.control.getCurrentStreet(lat, lng, $('#report-' + id + ' .street'));
 				App.control.changeLocation(lat, lng);
 			});
 		},
@@ -304,6 +425,13 @@ App = {
 		
 		$mapHeight: function() {
 			return $(window).height();
+		},
+		$registerPlz: function(msg) {
+			if (App.control.getUserDb().user == "Anonimo") {
+				alert(msg);
+				return true;
+			}
+			return false;
 		},
 
 		$changeVotes: function(id, num) {
@@ -314,7 +442,37 @@ App = {
 			$('#modal > .modal').modal('toggle');
 		},
 
-		$votedBlock: function() {
+		$registrationModal: function() {
+			$('#modal-registration > .modal').modal('toggle');
+			App.control.getRegistrationModule();
+		},
+
+		$loginModal: function() {
+			$('#modal-registration > .modal').modal('toggle');
+			App.control.getLoginModule();
+		},
+
+		$registrationValues: function() {
+			var values = {
+				name: $('#rName').val(),
+				pass: $('#rPass').val(),
+				email: $('#rMail').val(),
+				'btn-signup': '' 
+			};
+
+			return values;
+		},
+
+		$loginValues: function() {
+			var values = {
+				pass: $('#lPass').val(),
+				email: $('#lMail').val(),
+				'btn-login': '' 
+			};
+
+			return values;
+		},
+		$votedBlock: function() { // Add to the voted element the colors red or green
 
 			$('.report').removeClass('green red');
 			$.each(App.control.getVoteMemory(), function(index, value) {
@@ -330,7 +488,54 @@ App = {
 			});
 		},
 
+		$userLogged: function() {
+			if(App.control.getUserSession()) {
+				$('#userLogged').text(App.control.getUserSession()[0].name);
+				$('#userBar .dropdown-menu')
+					.prepend('<li><a id="logout" href="#">Logout</a></li>');
+				$('#registrati, #loginModal').css('display','none');
+				$('#logout').click(function(event) {
+					console.log('bau');
+					App.control.logout();
+					event.preventDefault();
+				});
+			}
+		},
+
+		ajaxListener: function() {
+			$('#submitUser').submit(function(event) {
+			  App.control.postRegistrationModule(App.view.$registrationValues());
+			  event.preventDefault();
+			});
+
+			$('.loginModal').click(function(event) {
+				App.control.getLoginModule();
+				event.preventDefault();
+			});
+
+			$('.registerModal').click(function(event) {
+				App.control.getRegistrationModule();
+				event.preventDefault();		
+			});
+
+			$('#userLogin').submit(function(event) {
+			  App.control.postLoginModule(App.view.$loginValues());
+			  event.preventDefault();
+			});
+		},
+
 		addListener: function() {	// Add all useful listener
+
+			$('#registrati').click(function(){
+				console.log('yo');
+				App.view.$registrationModal();
+			});
+
+			$('#loginModal').click(function(event) {
+				App.view.$loginModal();
+				event.preventDefault();
+			});
+
 			window.addEventListener('resize', function(){
 				$(App.view.$map).css('height', App.view.$mapHeight());
 				$('.first-column').css('height', App.view.$mapHeight());
@@ -338,32 +543,25 @@ App = {
 	        google.maps.event.addListener(App.map, 'click', function(event) {
 	        	App.view.$modalToggle();
 	        	App.control.temp = { lat: event.latLng.lat(), lng: event.latLng.lng()};
-	        });
+			});
 		}
-
 	}
 }
 
 
-
-/*
   function success(position) {
-  	var latLong = {
-  		lat: position.coords.latitude,
-  		lng: position.coords.longitude
-  	};
-
-  	console.log(latLong);
-  	return latLong;
+	var lat = position.coords.latitude;
+	var lng = position.coords.longitude;
+	
+	App.control.changeLocation(lat, lng);
+  	return true;
   };
 
   function error() {
     return 'false'
   };
 
-  navigator.geolocation.getCurrentPosition(success, error);
 
-*/
 
 function getCookie(cname) {
     var name = cname + "=";
