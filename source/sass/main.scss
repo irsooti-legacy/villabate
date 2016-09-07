@@ -1,0 +1,149 @@
+@import 'https://fonts.googleapis.com/css?family=Open+Sans';
+// Import bootstrap and sons
+@import './node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+@import './bower_components/font-awesome/scss/font-awesome.scss';
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	overflow: hidden;
+}
+header {
+	//background: #f75357;
+	//color: #FFF;
+}
+
+#logo {
+	width: 100%;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+#map {
+	height: 100%;
+	position: relative;
+}
+#reports p {
+	font-size: 1.3em;
+}
+
+.first-column {
+	box-shadow: 1px 1px 10px;
+	overflow: auto;
+}
+
+#helpBlock {
+	display: none;
+}
+
+.has-error #helpBlock {
+	display: block !important;
+}
+
+.report {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-bottom: solid 1px #CECECE;
+	cursor: pointer;
+}
+.red .fa-chevron-circle-down {
+	color: #d80027;
+}
+
+.green .fa-chevron-circle-up {
+	color: #b6db8a;
+}
+
+.votes, .fa-chevron-circle-down, .fa-chevron-circle-up {
+	padding-left: 10px;
+}
+
+#scrollDown {
+	padding: 5px;
+	position: absolute;
+	z-index: 100;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: #337ab7;
+	display: none;
+}
+
+#scrollTop {
+	padding: 5px;
+	background: #337ab7;
+	display: none;
+}
+#scrollDown a, #scrollTop a {
+	padding: 0.5em;
+	font-size: 2em;
+	color: #FFF;
+	font-weight: 300;
+	text-decoration: none;
+}
+
+#userBar {
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	z-index: 100;
+}
+
+#userBar .dropdown-menu {
+	left: unset;
+	right: 0;
+}
+
+@media screen and (max-width: 990px) {
+	#scrollDown, #scrollTop {
+		display: block;
+	}
+}
+
+/* GMAP */
+
+.controls {
+	margin-top: 10px;
+	border: 1px solid transparent;
+	border-radius: 2px 0 0 2px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	height: 32px;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#pac-input {
+	left: 0 !important;
+	top: 40px !important;
+	background-color: #fff;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
+	margin-left: 10px;
+	padding: 0 11px 0 13px;
+	text-overflow: ellipsis;
+	width: 300px;
+	max-width: 100%;
+}
+
+#pac-input:focus {
+	border-color: #4d90fe;
+}
+
+.pac-container {
+	font-family: Roboto;
+}
+
+#type-selector {
+	color: #fff;
+	background-color: #4d90fe;
+	padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+	font-family: Roboto;
+	font-size: 13px;
+	font-weight: 300;
+}
+#target {
+	width: 345px;
+}

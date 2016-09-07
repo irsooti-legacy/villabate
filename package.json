@@ -1,0 +1,36 @@
+{
+  "name": "villabate-segnala",
+  "version": "1.0.0",
+  "description": "Villabate Segnala si tratta di una web app e permette al cittadino, previa registrazione, di segnalare ed evidenziare eventuali irregolarità sul territorio villabatese, al fine di aiutare le autorità competenti.",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irsooti/villabate.git"
+  },
+  "author": "Daniele Irsuti",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/irsooti/villabate/issues"
+  },
+  "homepage": "https://github.com/irsooti/villabate#readme",
+  "devDependencies": {
+    "bootstrap": "^3.3.7",
+    "bootstrap-sass": "^3.3.7",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-eslint": "^3.0.1",
+    "gulp-htmlmin": "^2.0.0",
+    "gulp-imagemin": "^3.0.3",
+    "gulp-jasmine-phantom": "^3.0.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
+    "jasmine": "^2.5.0",
+    "phantomjs": "^2.1.7"
+  }
+}
