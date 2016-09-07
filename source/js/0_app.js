@@ -33,6 +33,8 @@ App = {
 				return { user:'Anonimo' };
 			if (user_votes.length == 0)
 				return { user:'Anonimo' };
+			if (!user_votes.hasOwnProperty('user'))
+				return { user:'Anonimo' };
 			return user_votes;
 		},
 

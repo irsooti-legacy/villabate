@@ -10,7 +10,7 @@ var eslint = require('gulp-eslint');
 var imagemin = require('gulp-imagemin');
 var clean = require('gulp-clean');
 var jasmine = require('gulp-jasmine-phantom');
-var phantomjs = require('phantomjs');
+var runSequence = require('run-sequence');
  
 
 /* Important Source and Dist */
@@ -41,23 +41,23 @@ var folder = {
 };
 
 
-gulp.task('default', ['clear', 'sass', 'copy-fonts', 'opti-img', 'lint', 'uglify', 'html-minify'], function() {
+gulp.task('default', ['sass', 'copy-fonts', 'opti-img', 'lint', 'uglify', 'html-minify'], function() {
 	
 });
 
 
-gulp.task('dist', function() {
-
+gulp.task('build', function(callback) {
+	runSequence('clear', 'default', callback);
 });
 
 gulp.task('unitTests', function () {
-  return gulp.src('test/spec/appTest.js')
+	return gulp.src(['/source/js/0_app.js','test/spec/appTest.js'])
           .pipe(jasmine());
 });
 
 gulp.task('clear', function () { 
 	return gulp.src([folder.dist.css, folder.dist.js, folder.dist.fonts, folder.dist.img, folder.dist.html], {read: false})
-	.pipe(clean());
+	.pipe(clean({force: true}));
 });
 
 gulp.task('lint', function() {

@@ -31,21 +31,23 @@
 
 	<div class="row">
 
-<div id="userBar" class="btn-group">
+		<div id="userBar" class="btn-group">
   
-  <button type="button" class="btn btn-primary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span class="caret"></span>
-    <span class="sr-only">Toggle Dropdown</span>
-  </button>
-  <ul class="dropdown-menu">
-    <li><a id="registrati" href="#">Registrati</a></li>
-    <li><a id="loginModal" href="#">Accedi</a></li>
-  </ul>
-  <button type="button" class="btn btn-primary dropdown-toggle">
-  <span id="userLogged">Ospite</span>
-  <span> <i class="fa fa-user" aria-hidden="true"></i></span></button>
-</div>
-		<aside class="col-lg-9 col-md-push-3">
+			<button type="button" class="btn btn-primary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<span class="caret"></span>
+				<span class="sr-only">Toggle Dropdown</span>
+			</button>
+			<ul class="dropdown-menu">
+				<li><a id="registrati" href="#">Registrati</a></li>
+				<li><a id="loginModal" href="#">Accedi</a></li>
+			</ul>
+			<button type="button" class="btn btn-primary dropdown-toggle">
+				<span id="userLogged">Ospite</span>
+				<span> <i class="fa fa-user" aria-hidden="true"></i></span>
+			</button>
+		</div>
+
+		<aside class="col-lg-9 col-lg-push-3">
 		<input id="pac-input" class="controls" type="text" placeholder="Cerca la via...">
 			<div class="row" id="map"></div>
 			<div id="scrollDown" class="text-center">
@@ -53,7 +55,8 @@
 			</div>
 			<div class="clearfix"></div>
 		</aside>
-		<div class="first-column col-lg-3 col-md-pull-9">
+
+		<div class="first-column col-lg-3 col-lg-pull-9">
 
 			<div id="scrollTop" class="text-center row">
 				<a href="#"><i class="fa fa-angle-up" aria-hidden="true"></i> Mappa</a>
@@ -68,13 +71,16 @@
 				</div>
 			</header>
 			<div class="row" style="color: #FFF; background: #d80027; padding-top: 10px">
-			<div class="col-sm-12">
-			<p>Segnala le irregolarità, contribuisci a rendere pulita la tua città!</p></div>
+				<div class="col-sm-12">
+				<p>Segnala le irregolarità, contribuisci a rendere pulita la tua città!</p>
+				</div>
 			</div>
 			<div class="row" style="padding-top: 2em">
 				<div class="col-sm-12" id="reports"></div>
 			</div>
 		</div>
+
+
 	</div>	
 </div>
 <div id="modal">
