@@ -23,7 +23,11 @@ $('#logout').click(function(event) {
 });
 $('#userLogged').text('<?php echo $_SESSION['name'] ?>');
 
-<?php  echo json_encode([['name' => $_SESSION['name'], 'id' => $_SESSION['user']]]).";\r\n"; } else echo "[];\r\n" ?>
+<?php 
+echo json_encode([['name' => $_SESSION['name'], 'id' => $_SESSION['user']]]).";\r\n";
+
+}
+else echo "[];\r\n" ?>
 <?php require_once('new_user_votes.php') ?>;
 
 App.view.$votedBlock();

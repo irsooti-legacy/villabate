@@ -11,6 +11,7 @@ var imagemin = require('gulp-imagemin');
 var clean = require('gulp-clean');
 var jasmine = require('gulp-jasmine-phantom');
 var runSequence = require('run-sequence');
+var phpMinify = require('gulp-php-minify');
  
 
 /* Important Source and Dist */
@@ -41,7 +42,7 @@ var folder = {
 };
 
 
-gulp.task('default', ['sass', 'copy-fonts', 'opti-img', 'lint', 'uglify', 'html-minify'], function() {
+gulp.task('default', ['sass', 'copy-fonts', 'opti-img', 'lint', 'uglify', 'html-minify', 'inc-php-inc'], function() {
 	
 });
 
@@ -107,6 +108,12 @@ gulp.task('sass', function() {
 });
 
 gulp.task('html-minify', function() {  return gulp.src('source/*.php')
-    .pipe(htmlmin({collapseWhitespace: true}))
-    .pipe(gulp.dest('dist'));
+	.pipe(phpMinify())
+	.pipe(htmlmin({collapseWhitespace: true}))
+	.pipe(gulp.dest('dist'));
+});
+
+gulp.task('inc-php-inc', function() {  return gulp.src('source/inc/*.php')
+	.pipe(phpMinify())
+	.pipe(gulp.dest('dist/inc'));
 });
