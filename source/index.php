@@ -2,19 +2,20 @@
 
 <?php session_start() ?>
 <html>
-<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#">
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Villabate Segnala</title>
 	<meta name="description" content="Villabate Segnala è un progetto che spinge la comunità a registrare le irregolarità e segnalarle, al fine di aiutare le autorità competenti a trovare una soluzione">
+	<meta name="google-site-verification" content="0ZXzKfPLHZX87fPd9a3Sux-2pFEVpuqRA6_aRAtFDPU">
 	<meta name="author" content="Daniele Irsuti">
 	<link rel="icon" href="./favicon.png">
 	<meta property="og:title" content="Villabate segnala">
 	<meta property="og:site_name" content="Villabate segnala">
 	<meta property="og:type" content="website">
-	<meta property="og:url" content="http://pc.danieleirsuti.com/villabate/">
-	<meta property="og:image" content="http://pc.danieleirsuti.com/villabate/img/villabate.png">
+	<meta property="og:url" content="http://www.villabate.online">
+	<meta property="og:image" content="http://www.villabate.online/img/villabate.png">
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>

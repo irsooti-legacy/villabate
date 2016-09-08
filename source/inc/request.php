@@ -6,6 +6,7 @@ $sql = "SELECT id, titolo, segnalatore, lat, lng, voti, img FROM report ORDER BY
 $result = $conn->query($sql);
 
 $reports = [];
+echo "Debug ". $result->num_rows;
 if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
@@ -19,10 +20,7 @@ if ($result->num_rows > 0) {
     		"img" =>			$row["img"] ]
     		);
     }
-} else {
-    echo "var markers = []";
 }
-
 
 session_start();
 
