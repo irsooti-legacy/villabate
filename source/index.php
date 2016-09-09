@@ -15,7 +15,7 @@
 	<meta property="og:site_name" content="Villabate segnala">
 	<meta property="og:type" content="website">
 	<meta property="og:url" content="http://www.villabate.online">
-	<meta property="og:image" content="http://www.villabate.online/img/villabate.png">
+	<meta property="og:image" content="http://www.villabate.online/img/villabate.PNG">
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
