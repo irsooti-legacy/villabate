@@ -2,6 +2,8 @@
 
 require_once("connection.php");
 
+header('Content-type: text/javascript');
+
 $sql = "SELECT id, titolo, segnalatore, lat, lng, voti, img FROM report ORDER BY voti DESC";
 $result = $conn->query($sql);
 
