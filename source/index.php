@@ -10,7 +10,7 @@
 	<meta name="description" content="Villabate Segnala è un progetto che spinge la comunità a registrare le irregolarità e segnalarle, al fine di aiutare le autorità competenti a trovare una soluzione">
 	<meta name="google-site-verification" content="0ZXzKfPLHZX87fPd9a3Sux-2pFEVpuqRA6_aRAtFDPU">
 	<meta name="author" content="Daniele Irsuti">
-	<link rel="icon" href="./favicon.png">
+	<!-- shortcut::./source/favicon.png -->
 	<meta property="og:title" content="Villabate segnala">
 	<meta property="og:site_name" content="Villabate segnala">
 	<meta property="og:type" content="website">

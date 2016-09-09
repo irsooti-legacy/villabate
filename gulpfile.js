@@ -12,7 +12,8 @@ var clean = require('gulp-clean');
 var jasmine = require('gulp-jasmine-phantom');
 var runSequence = require('run-sequence');
 var phpMinify = require('gulp-php-minify');
- 
+var filelog = require('gulp-filelog');
+var favicon = require('gulp-base64-favicon');
 
 /* Important Source and Dist */
 
@@ -29,7 +30,7 @@ var folder = {
 			'node_modules/bootstrap-sass/assets/fonts/**/*.{ttf,otf,woff,woff2,svg,eot}',
 			'bower_components/font-awesome/fonts/**/*.{ttf,otf,woff,woff2,svg,eot}'
 		],
-		img: 'source/img/**/*.{png,jpg,jpeg,svg}'
+		img: 'source/img/**/*.{PNG,png,jpg,JPG,svg,SVG}' // Mannaggia a windows che fa ste cagate...
 	},
 
 	dist: {
@@ -48,7 +49,7 @@ gulp.task('default', ['sass', 'copy-fonts', 'opti-img', 'lint', 'uglify', 'html-
 
 
 gulp.task('build', function(callback) {
-	runSequence('clear', 'default', callback);
+	runSequence('clear', 'default', 'favicon', callback);
 });
 
 gulp.task('unitTests', function () {
@@ -79,9 +80,11 @@ gulp.task('lint', function() {
 });
 
 gulp.task('opti-img', function() { 
-	gulp.src(folder.source.img)
-        .pipe(imagemin())
-        .pipe(gulp.dest(folder.dist.img));
+	return gulp.src(folder.source.img)
+		.pipe(gulp.dest(folder.dist.img))
+		.pipe(filelog('Preparing'))
+		.pipe(imagemin()) // Optimize
+		.pipe(filelog('Optimized'));
 });
 
 gulp.task('copy-fonts', function() {
@@ -105,6 +108,12 @@ gulp.task('sass', function() {
         }))
 	.pipe(sourcemaps.write('.'))
 	.pipe(gulp.dest(folder.dist.css));
+});
+
+gulp.task('favicon', function() {
+	return gulp.src('dist/index.php')
+		.pipe(favicon())
+		.pipe(gulp.dest('dist'));
 });
 
 gulp.task('html-minify', function() {  return gulp.src('source/*.php')
