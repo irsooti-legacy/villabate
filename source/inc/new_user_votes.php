@@ -16,7 +16,7 @@ if(isset($_SESSION['user'])) {
 
 	$useful_obj = [];
 
-	while ($fetched_result = $result->fetch_array(MYSQL_ASSOC)) {
+	while ($fetched_result = $result->fetch_array()) {
 	    array_push($useful_obj, 
 	        [ // index renamed 
 	            "id" => $fetched_result['id_voto'],

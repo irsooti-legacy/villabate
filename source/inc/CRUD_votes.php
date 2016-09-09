@@ -27,7 +27,7 @@ if ( ($voto == "up") || ($voto == "down") ) {
 
 	if ($result) {
 
-		$fetched_result = $result->fetch_array(MYSQL_ASSOC);
+		$fetched_result = $result->fetch_array();
 		$count = $result->num_rows;
 
 		$id = $fetched_result['id'];
