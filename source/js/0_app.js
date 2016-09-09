@@ -5,8 +5,8 @@ App = {
 	model: { 
 		coordinates: // Interested centered zone
 		{
-			lat: 38.0788619, 
-			lng: 13.4377403
+			lat: 38.077233938157, 
+			lng: 13.44393968582
 		},
 
 		img: []
